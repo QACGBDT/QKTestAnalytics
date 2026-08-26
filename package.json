@@ -4,10 +4,28 @@
   "description": "Open, framework-agnostic test analytics and reporting for Quality & Knowledge.",
   "type": "module",
   "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "exports": {
-    ".": "./src/index.js",
-    "./reporter": "./src/report/build-report.js",
-    "./data": "./src/core/execution-data-manager.js"
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./reporter": {
+      "types": "./src/report/build-report.d.ts",
+      "default": "./src/report/build-report.js"
+    },
+    "./data": {
+      "types": "./src/core/execution-data-manager.d.ts",
+      "default": "./src/core/execution-data-manager.js"
+    },
+    "./adapters": {
+      "types": "./src/adapters/index.d.ts",
+      "default": "./src/adapters/index.js"
+    },
+    "./adapters/wdio-cucumber": {
+      "types": "./src/adapters/wdio-cucumber.d.ts",
+      "default": "./src/adapters/wdio-cucumber.js"
+    }
   },
   "bin": {
     "qkta": "./bin/qkta.js",

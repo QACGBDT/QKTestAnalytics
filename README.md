@@ -7,7 +7,7 @@ Open, framework-agnostic test analytics and reporting from **Quality & Knowledge
 ## Why QKTestAnalytics
 
 - **Zero-server by default**: generate a portable, self-contained HTML report locally or in CI.
-- **Framework-agnostic core**: the normalized schema does not depend on WebdriverIO's global `browser` object.
+- **Framework-agnostic core**: runner sessions and globals stay in adapters, never in core.
 - **Historical analytics**: combine current and archived execution JSON into one model.
 - **Evidence-friendly**: steps, errors, browser metadata, screenshots/video references can be represented without forcing a storage backend.
 - **Public-package safe**: no install-time Python, pip, OpenCV, database or service requirement.
@@ -37,6 +37,28 @@ npx qkta cycle --new -- npm test
 
 Transition aliases `qreport-build` and `qreport-cycle` remain available in 0.x.
 
+## WebdriverIO + Cucumber
+
+QKTestAnalytics includes its first official adapter without adding a mandatory WebdriverIO dependency to the package:
+
+```js
+import { createWdioCucumberAdapter } from 'qk-test-analytics/adapters/wdio-cucumber';
+
+const qkta = createWdioCucumberAdapter({
+  capture: 'on-failure'
+});
+
+export const config = {
+  framework: 'cucumber',
+  // ...your existing WDIO configuration
+  ...qkta.hooks
+};
+```
+
+The adapter consumes the browser/session instance passed by WebdriverIO's `before` hook rather than a global `browser`. Pass/fail lifecycle, duration, errors, tags and screenshots are translated through the framework-neutral Adapter SDK. Existing QReport JSON remains the default compatibility output.
+
+See [Adapter SDK and integrations](docs/ADAPTERS.md) for custom evidence, capture policies and building another adapter.
+
 ## Programmatic API
 
 ```js
@@ -49,6 +71,8 @@ report.recordEnd();
 
 buildReport();
 ```
+
+Adapter primitives are also available from `qk-test-analytics/adapters`.
 
 ## Development quality gates
 
@@ -69,13 +93,15 @@ The current minimums are **85% line coverage**, **85% function coverage**, and *
 
 ## Architecture
 
-QKTestAnalytics separates **collection**, **normalization**, **analytics** and **presentation**. Framework adapters emit or translate into the versioned canonical model. The HTML renderer consumes only that model, which prevents the UI from becoming tied to a runner.
+QKTestAnalytics separates **collection**, **normalization**, **analytics** and **presentation**. Framework adapters emit a versioned event contract consumed by storage/analytics sinks. The HTML renderer consumes the normalized model, which prevents the UI from becoming tied to a runner.
 
-See [Architecture](docs/ARCHITECTURE.md), [Competitive analysis](docs/COMPETITIVE-ANALYSIS.md), [Migration](docs/MIGRATION.md), and [Roadmap](docs/ROADMAP.md).
+See [Architecture](docs/ARCHITECTURE.md), [Adapter SDK](docs/ADAPTERS.md), [Competitive analysis](docs/COMPETITIVE-ANALYSIS.md), [Migration](docs/MIGRATION.md), and [Roadmap](docs/ROADMAP.md).
 
 ## Current compatibility
 
 The importer understands the JSON hierarchy produced by `@qacgbdt/quality-report-data` 1.1.x and the current/history convention consumed by `@qacgbdt/quality-dashboard` 1.1.x. Existing `qreport-results/media-bucket/reports/{current,rep_*}.json` directories can therefore be rendered without changing historical data.
+
+The WDIO/Cucumber adapter writes that same compatibility structure by default through `LegacyQReportSink`, allowing QK frameworks to migrate their lifecycle code without losing existing report history or dashboard compatibility.
 
 ## Security and public contribution
 
