@@ -48,14 +48,19 @@ try {
     tarball
   ], { cwd: consumer });
 
-  const smoke = [
+  const smokeFile = path.join(consumer, 'smoke.mjs');
+  fs.writeFileSync(smokeFile, [
     "import * as api from 'qk-test-analytics';",
+    "import { buildReport } from 'qk-test-analytics/reporter';",
+    "import { ExecutionDataManager } from 'qk-test-analytics/data';",
     "const required = ['ExecutionDataManager', 'buildReport', 'normalizeLegacyReport', 'summarizeExecutions', 'SCHEMA_VERSION'];",
     "for (const name of required) if (!(name in api)) throw new Error(`Missing export: ${name}`);",
-    "if (api.SCHEMA_VERSION !== '1.0') throw new Error('Unexpected schema version');"
-  ].join(' ');
+    "if (api.SCHEMA_VERSION !== '1.0') throw new Error('Unexpected schema version');",
+    "if (api.buildReport !== buildReport) throw new Error('Reporter subpath export is inconsistent');",
+    "if (api.ExecutionDataManager !== ExecutionDataManager) throw new Error('Data subpath export is inconsistent');"
+  ].join('\n'), 'utf8');
 
-  run(process.execPath, ['--input-type=module', '-e', smoke], { cwd: consumer });
+  run(process.execPath, [smokeFile], { cwd: consumer });
 
   const installedCli = path.join(
     consumer,
