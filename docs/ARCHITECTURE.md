@@ -55,7 +55,7 @@ The old dashboard performs `pip install` in `postinstall` and uses Python/OpenCV
 
 The project starts as one package to keep adoption simple. Split packages (`core`, adapters, UI) should happen only when adapter dependency pressure justifies it. Public APIs are exported through `package.json#exports`; consumers should not import internal paths.
 
-Current adapter entry points are `qk-test-analytics/adapters` and `qk-test-analytics/adapters/wdio-cucumber`.
+Current adapter entry points are `@qacg/qk-test-analytics/adapters` and `@qacg/qk-test-analytics/adapters/wdio-cucumber`.
 
 ## Compatibility policy
 
