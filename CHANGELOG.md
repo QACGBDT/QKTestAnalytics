@@ -8,6 +8,15 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ### Added
 
+- Cross-run analytics contract with stable test identity and deterministic history aggregation.
+- Retry model with retry-flaky and historical pass/fail classification.
+- Duration median/p95 trends, configurable regression detection and slow-test ranking.
+- Normalized failure fingerprints and recurring-failure grouping.
+- Execution comparison by run id, cycle, branch, commit or project with status/duration/fingerprint deltas.
+- `qkta analyze` and `qkta compare` machine-readable JSON export commands.
+- Public analytics API at `qk-test-analytics/analytics` plus TypeScript declarations.
+- Auditable analytics formulas and threshold semantics in `docs/ANALYTICS.md`.
+- Deterministic historical fixtures covering retries, flakiness, duration regressions and recurring failures.
 - Versioned reporter event contract and `ReporterRuntime` sink pipeline.
 - Official dependency-free WebdriverIO + Cucumber hook adapter.
 - `FileEvidenceStore` with legacy-compatible screenshot paths and general attachment storage.
@@ -25,6 +34,7 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ### Changed
 
+- Stable identity explicitly separates browser variants to avoid false retry/flakiness classification.
 - Runner lifecycle behavior is now owned by adapters rather than core utilities.
 - The WDIO adapter keeps the explicitly passed session instance instead of reading a global `browser`.
 - `develop` is now the integration base for CI and contributor pull requests.

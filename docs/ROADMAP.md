@@ -21,12 +21,14 @@
 
 ## 0.3 — Analytics
 
-- Stable test identity across runs.
-- Retry model and flaky-test detection.
-- Duration regression and slow-test views.
-- Failure fingerprinting/grouping.
-- Compare two runs/branches/commits.
-- Export machine-readable analytics JSON.
+Implemented core in issue #3:
+
+- Stable test identity across runs and browser/data variants.
+- Retry model plus retry-flaky and history-flaky classification.
+- Duration trends, median baseline regression detection and p95 slow-test ranking.
+- Normalized failure fingerprinting/grouping.
+- Compare two executions by run/cycle/branch/commit/project selector.
+- Machine-readable analytics and comparison JSON exports.
 
 ## 0.4 — CI quality gates
 

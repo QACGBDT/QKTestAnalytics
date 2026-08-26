@@ -7,25 +7,36 @@ export interface NormalizedStep {
 
 export interface NormalizedTest {
   id: string;
+  historyId?: string;
+  stableId?: string;
   name: string;
   suite: string;
   status: string;
   durationMs: number;
-  browser: string | null;
-  error: unknown;
-  video: string | null;
-  steps: NormalizedStep[];
+  browser?: string | null;
+  error?: unknown;
+  video?: string | null;
+  parameters?: Record<string, unknown> | unknown[] | null;
+  params?: Record<string, unknown> | unknown[] | null;
+  attempt?: number;
+  retry?: number;
+  steps?: NormalizedStep[];
+  [key: string]: unknown;
 }
 
 export interface NormalizedExecution {
   id: string;
-  cycle: string;
-  source: string;
-  project: string | null;
-  startedAt: string | null;
-  endedAt: string | null;
-  durationMs: number;
+  cycle?: string;
+  source?: string;
+  project?: string | null;
+  branch?: string | null;
+  commit?: string | null;
+  metadata?: Record<string, any>;
+  startedAt?: string | null;
+  endedAt?: string | null;
+  durationMs?: number;
   tests: NormalizedTest[];
+  [key: string]: unknown;
 }
 
 export interface NormalizedReport {
