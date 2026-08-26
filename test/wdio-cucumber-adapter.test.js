@@ -136,18 +136,40 @@ test('screenshot failures are reported through callback without masking test res
   assert.equal(ended.payload.status, 'FAILED');
 });
 
-test('explicit evidence target works without active scenario and validates missing targets', async () => {
+test('explicit evidence target supports async stores and validates missing targets', async () => {
   const events = [];
   const runtime = new ReporterRuntime({ sinks: [event => events.push(event)] });
   const adapter = new WdioCucumberAdapter({
     runtime,
-    evidenceStore: { save: () => ({ kind: 'attachment', path: 'a.bin' }) },
+    evidenceStore: { save: async () => ({ kind: 'attachment', path: 'a.bin' }) },
     capture: 'never'
   });
-  await adapter.attachEvidence('x', { scenarioId: 's', stepId: 'st' });
+  const artifact = await adapter.attachEvidence('x', { scenarioId: 's', stepId: 'st' });
+  assert.equal(artifact.path, 'a.bin');
   assert.equal(events[0].payload.scenarioId, 's');
   await assert.rejects(() => adapter.attachEvidence('x'), /requires an active or explicit/);
   await assert.rejects(() => adapter.captureScreenshot({ scenarioId: 's', stepId: 'st' }), /takeScreenshot/);
+});
+
+test('uses session capabilities and project environment fallbacks when explicit metadata is absent', async () => {
+  const events = [];
+  const previous = process.env.QKTA_PROJECT;
+  process.env.QKTA_PROJECT = 'env-project';
+  try {
+    const runtime = new ReporterRuntime({ sinks: [event => events.push(event)] });
+    const adapter = new WdioCucumberAdapter({ runtime, capture: 'never', now: () => 10 });
+    await adapter.before({}, 'not-an-array', { capabilities: { browserName: 'edge' } });
+    await adapter.after(undefined);
+    const started = events.find(event => event.type === ReporterEventType.RUN_START);
+    const ended = events.find(event => event.type === ReporterEventType.RUN_END);
+    assert.equal(started.payload.projectName, 'env-project');
+    assert.equal(started.payload.browser, 'edge');
+    assert.deepEqual(started.payload.specs, []);
+    assert.equal(ended.payload.exitCode, undefined);
+  } finally {
+    if (previous === undefined) delete process.env.QKTA_PROJECT;
+    else process.env.QKTA_PROJECT = previous;
+  }
 });
 
 test('factories expose the documented hook surface and allow custom runtimes', () => {
