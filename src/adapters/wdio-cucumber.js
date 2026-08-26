@@ -192,7 +192,7 @@ export class WdioCucumberAdapter {
     const stepId = options.stepId || this.step?.stepId;
     if (!scenarioId || !stepId) throw new Error('evidence requires an active or explicit scenarioId and stepId');
 
-    const artifact = this.evidenceStore.save({
+    const artifact = await this.evidenceStore.save({
       content,
       kind: options.kind || 'attachment',
       name: options.name,
