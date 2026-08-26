@@ -10,4 +10,5 @@ export type {
   NormalizedStep,
   NormalizedTest
 } from './core/model.js';
+export * from './analytics/index.js';
 export * from './adapters/index.js';

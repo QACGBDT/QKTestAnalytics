@@ -18,6 +18,10 @@
       "types": "./src/core/execution-data-manager.d.ts",
       "default": "./src/core/execution-data-manager.js"
     },
+    "./analytics": {
+      "types": "./src/analytics/index.d.ts",
+      "default": "./src/analytics/index.js"
+    },
     "./adapters": {
       "types": "./src/adapters/index.d.ts",
       "default": "./src/adapters/index.js"

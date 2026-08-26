@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-08-26T20:00:00.000Z",
+  "executions": [
+    {
+      "id": "run-1",
+      "cycle": "cycle-1",
+      "project": "shop",
+      "branch": "main",
+      "commit": "c1",
+      "startedAt": "2026-08-20T10:00:00.000Z",
+      "tests": [
+        { "id": "r1:checkout", "name": "checkout payment", "suite": "Checkout", "status": "PASSED", "durationMs": 1000, "error": null },
+        { "id": "r1:search", "name": "search catalog", "suite": "Catalog", "status": "PASSED", "durationMs": 300, "error": null },
+        { "id": "r1:health", "name": "backend health", "suite": "API", "status": "FAILED", "durationMs": 500, "error": "TimeoutError: request 123456 timed out at 2026-08-20T10:00:00Z id 7b57efc0-3e8c-4bd9-bef3-a74c0df14090" }
+      ]
+    },
+    {
+      "id": "run-2",
+      "cycle": "cycle-2",
+      "project": "shop",
+      "branch": "main",
+      "commit": "c2",
+      "startedAt": "2026-08-21T10:00:00.000Z",
+      "tests": [
+        { "id": "r2:checkout:1", "name": "checkout payment", "suite": "Checkout", "status": "FAILED", "durationMs": 1100, "error": "GatewayError: temporary gateway 503 request 654321" },
+        { "id": "r2:checkout:2", "name": "checkout payment", "suite": "Checkout", "status": "PASSED", "durationMs": 1200, "error": null },
+        { "id": "r2:search", "name": "search catalog", "suite": "Catalog", "status": "PASSED", "durationMs": 310, "error": null },
+        { "id": "r2:health", "name": "backend health", "suite": "API", "status": "FAILED", "durationMs": 510, "error": "TimeoutError: request 222222 timed out at 2026-08-21T10:00:00Z id 5544ef73-c9c4-4de2-8f6f-30c86de9877a" }
+      ]
+    },
+    {
+      "id": "run-3",
+      "cycle": "cycle-3",
+      "project": "shop",
+      "branch": "main",
+      "commit": "c3",
+      "startedAt": "2026-08-22T10:00:00.000Z",
+      "tests": [
+        { "id": "r3:checkout", "name": "checkout payment", "suite": "Checkout", "status": "PASSED", "durationMs": 1300, "error": null },
+        { "id": "r3:search", "name": "search catalog", "suite": "Catalog", "status": "FAILED", "durationMs": 350, "error": "AssertionError: expected 200 but got 500" },
+        { "id": "r3:health", "name": "backend health", "suite": "API", "status": "FAILED", "durationMs": 520, "error": "TimeoutError: request 333333 timed out at 2026-08-22T10:00:00Z id 2ea3992f-734d-4da0-987b-f29f67679b18" }
+      ]
+    },
+    {
+      "id": "run-4",
+      "cycle": "cycle-4",
+      "project": "shop",
+      "branch": "feature/analytics",
+      "commit": "c4",
+      "startedAt": "2026-08-23T10:00:00.000Z",
+      "tests": [
+        { "id": "r4:checkout", "name": "checkout payment", "suite": "Checkout", "status": "PASSED", "durationMs": 1800, "error": null },
+        { "id": "r4:search", "name": "search catalog", "suite": "Catalog", "status": "PASSED", "durationMs": 340, "error": null },
+        { "id": "r4:health", "name": "backend health", "suite": "API", "status": "FAILED", "durationMs": 530, "error": "TimeoutError: request 444444 timed out at 2026-08-23T10:00:00Z id ffe743d5-f5e1-4a2c-9f00-cb16e062d339" },
+        { "id": "r4:export", "name": "export inventory", "suite": "Catalog", "status": "PASSED", "durationMs": 2500, "error": null }
+      ]
+    }
+  ]
+}
