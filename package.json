@@ -1,0 +1,33 @@
+{
+  "name": "qk-test-analytics",
+  "version": "0.1.0",
+  "description": "Open, framework-agnostic test analytics and reporting for Quality & Knowledge.",
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./reporter": "./src/report/build-report.js",
+    "./data": "./src/core/execution-data-manager.js"
+  },
+  "bin": {
+    "qkta": "./bin/qkta.js",
+    "qreport-build": "./bin/qkta.js",
+    "qreport-cycle": "./bin/qkta.js"
+  },
+  "files": ["bin", "src", "README.md", "LICENSE", "CHANGELOG.md"],
+  "scripts": {
+    "test": "node --test",
+    "check": "npm test && npm pack --dry-run",
+    "report": "node ./bin/qkta.js build",
+    "prepublishOnly": "npm run check"
+  },
+  "engines": { "node": ">=20" },
+  "keywords": ["testing", "test-report", "test-analytics", "qa", "quality-engineering", "cucumber", "webdriverio", "playwright", "allure-alternative"],
+  "author": "Quality & Knowledge",
+  "license": "Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/QACGBDT/QKTestAnalytics.git" },
+  "bugs": { "url": "https://github.com/QACGBDT/QKTestAnalytics/issues" },
+  "homepage": "https://github.com/QACGBDT/QKTestAnalytics#readme",
+  "publishConfig": { "access": "public", "provenance": true },
+  "dependencies": {}
+}
