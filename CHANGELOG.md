@@ -8,6 +8,14 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ### Added
 
+- `qkta gate` command with configurable pass-rate, failure, flaky-rate and duration-regression thresholds.
+- Stable quality-gate exit codes: `0` pass, `1` usage/data/configuration error and `2` quality violation.
+- Machine-readable gate JSON plus human console and GitHub-flavored Markdown summaries.
+- Target-aware quality evaluation that truncates analytics history at the selected run/branch/commit/project.
+- Public quality-gate API and TypeScript declarations through `qk-test-analytics/analytics`.
+- GitHub Actions quality-gate example that publishes a job/check summary and uploads report/gate artifacts before enforcement.
+- Auditable baseline, formula and threshold documentation in `docs/QUALITY-GATES.md`.
+- Pass/fail/boundary/error tests for programmatic and CLI gate flows.
 - Cross-run analytics contract with stable test identity and deterministic history aggregation.
 - Retry model with retry-flaky and historical pass/fail classification.
 - Duration median/p95 trends, configurable regression detection and slow-test ranking.
