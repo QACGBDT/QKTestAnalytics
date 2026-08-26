@@ -46,12 +46,12 @@ export declare class ReporterRuntime {
   emit<TPayload extends Record<string, unknown>>(type: ReporterEventTypeValue, payload?: TPayload): Promise<ReporterEvent<TPayload>>;
 }
 
-export interface ReporterAdapter {
+export interface ReporterAdapter<THooks extends object = Record<string, (...args: any[]) => unknown>> {
   readonly name: string;
-  readonly hooks: Readonly<Record<string, (...args: any[]) => unknown>>;
+  readonly hooks: Readonly<THooks>;
 }
 
-export declare function assertReporterAdapter<T extends ReporterAdapter>(adapter: T): T;
+export declare function assertReporterAdapter<T extends ReporterAdapter<any>>(adapter: T): T;
 
 export interface EvidenceArtifact {
   id?: string;
@@ -122,7 +122,7 @@ export interface WdioCucumberHooks {
   afterStep(step?: Record<string, any>, scenario?: Record<string, any>, result?: Record<string, any>, context?: any): Promise<void>;
 }
 
-export declare class WdioCucumberAdapter implements ReporterAdapter {
+export declare class WdioCucumberAdapter implements ReporterAdapter<WdioCucumberHooks> {
   constructor(options: WdioCucumberAdapterOptions & { runtime: ReporterRuntime });
   readonly name: 'wdio-cucumber';
   readonly hooks: Readonly<WdioCucumberHooks>;
