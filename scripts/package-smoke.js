@@ -53,15 +53,19 @@ try {
     "import * as api from 'qk-test-analytics';",
     "import { buildReport } from 'qk-test-analytics/reporter';",
     "import { ExecutionDataManager } from 'qk-test-analytics/data';",
+    "import { buildAnalytics, compareExecutions } from 'qk-test-analytics/analytics';",
     "import { ReporterRuntime } from 'qk-test-analytics/adapters';",
     "import { createWdioCucumberAdapter } from 'qk-test-analytics/adapters/wdio-cucumber';",
-    "const required = ['ExecutionDataManager', 'buildReport', 'normalizeLegacyReport', 'summarizeExecutions', 'SCHEMA_VERSION', 'ReporterRuntime', 'createWdioCucumberAdapter'];",
+    "const required = ['ExecutionDataManager', 'buildReport', 'normalizeLegacyReport', 'summarizeExecutions', 'SCHEMA_VERSION', 'buildAnalytics', 'compareExecutions', 'ReporterRuntime', 'createWdioCucumberAdapter'];",
     "for (const name of required) if (!(name in api)) throw new Error(`Missing export: ${name}`);",
     "if (api.SCHEMA_VERSION !== '1.0') throw new Error('Unexpected schema version');",
     "if (api.buildReport !== buildReport) throw new Error('Reporter subpath export is inconsistent');",
     "if (api.ExecutionDataManager !== ExecutionDataManager) throw new Error('Data subpath export is inconsistent');",
+    "if (api.buildAnalytics !== buildAnalytics || api.compareExecutions !== compareExecutions) throw new Error('Analytics subpath export is inconsistent');",
     "if (api.ReporterRuntime !== ReporterRuntime) throw new Error('Adapters subpath export is inconsistent');",
-    "if (api.createWdioCucumberAdapter !== createWdioCucumberAdapter) throw new Error('WDIO adapter subpath export is inconsistent');"
+    "if (api.createWdioCucumberAdapter !== createWdioCucumberAdapter) throw new Error('WDIO adapter subpath export is inconsistent');",
+    "const analytics = buildAnalytics({ schemaVersion: '1.0', generatedAt: '2026-01-01T00:00:00Z', executions: [] });",
+    "if (analytics.analyticsVersion !== '1.0') throw new Error('Unexpected analytics contract version');"
   ].join('\n'), 'utf8');
 
   run(process.execPath, [smokeFile], { cwd: consumer });
@@ -76,7 +80,9 @@ try {
   if (!fs.existsSync(installedCli)) throw new Error('Published package is missing the qkta CLI');
 
   const help = run(process.execPath, [installedCli, '--help'], { cwd: consumer });
-  if (!help.stdout.includes('qkta build')) throw new Error('Installed qkta CLI help is invalid');
+  if (!help.stdout.includes('qkta build') || !help.stdout.includes('qkta analyze') || !help.stdout.includes('qkta compare')) {
+    throw new Error('Installed qkta CLI help is invalid');
+  }
 
   console.log('[QKTestAnalytics] Package consumer smoke test passed.');
 } finally {

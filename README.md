@@ -2,13 +2,13 @@
 
 Open, framework-agnostic test analytics and reporting from **Quality & Knowledge (QK)**. QKTestAnalytics consolidates the former `quality-report-data` and `quality-dashboard` projects into one public npm package and one stable reporting contract.
 
-> Status: **0.1.x foundation**. The legacy QReport JSON format is supported while adapters for common frameworks are added.
+> Status: **0.1.x foundation**. The legacy QReport JSON format is supported while adapters and cross-run analytics are added.
 
 ## Why QKTestAnalytics
 
 - **Zero-server by default**: generate a portable, self-contained HTML report locally or in CI.
 - **Framework-agnostic core**: runner sessions and globals stay in adapters, never in core.
-- **Historical analytics**: combine current and archived execution JSON into one model.
+- **Historical analytics**: stable test identity, retries/flakiness, duration regression, slow-test p95 and failure fingerprinting across runs.
 - **Evidence-friendly**: steps, errors, browser metadata, screenshots/video references can be represented without forcing a storage backend.
 - **Public-package safe**: no install-time Python, pip, OpenCV, database or service requirement.
 - **QK-native, vendor-neutral**: designed as the default reporter across QK frameworks while remaining usable independently.
@@ -25,8 +25,11 @@ npm install -D qk-test-analytics
 # Build the report from the legacy/default result directory
 npx qkta build
 
-# Custom paths
-npx qkta build --input ./results --output ./artifacts/report.html
+# Generate machine-readable cross-run analytics
+npx qkta analyze --output qreport-results/analytics.json
+
+# Compare two cycles/runs/branches/commits
+npx qkta compare --base main --head feature/checkout --output qreport-results/comparison.json
 
 # Archive current.json
 npx qkta clean
@@ -35,7 +38,7 @@ npx qkta clean
 npx qkta cycle --new -- npm test
 ```
 
-Transition aliases `qreport-build` and `qreport-cycle` remain available in 0.x.
+Transition aliases `qreport-build` and `qreport-cycle` remain available in 0.x. See [Cross-run analytics](docs/ANALYTICS.md) for formulas and threshold semantics.
 
 ## WebdriverIO + Cucumber
 
@@ -62,7 +65,7 @@ See [Adapter SDK and integrations](docs/ADAPTERS.md) for custom evidence, captur
 ## Programmatic API
 
 ```js
-import { ExecutionDataManager, buildReport } from 'qk-test-analytics';
+import { buildAnalytics, buildReport, ExecutionDataManager } from 'qk-test-analytics';
 
 const report = new ExecutionDataManager();
 report.recordStart({ projectName: 'checkout', framework: 'webdriverio' });
@@ -70,9 +73,15 @@ report.saveData('Checkout.pay.test_summary.status', 'PASSED');
 report.recordEnd();
 
 buildReport();
+
+const analytics = buildAnalytics({
+  schemaVersion: '1.0',
+  generatedAt: new Date().toISOString(),
+  executions: []
+});
 ```
 
-Adapter primitives are also available from `qk-test-analytics/adapters`.
+Adapter primitives are available from `qk-test-analytics/adapters`; analytics primitives are also available from `qk-test-analytics/analytics`.
 
 ## Development quality gates
 
@@ -93,13 +102,13 @@ The current minimums are **85% line coverage**, **85% function coverage**, and *
 
 ## Architecture
 
-QKTestAnalytics separates **collection**, **normalization**, **analytics** and **presentation**. Framework adapters emit a versioned event contract consumed by storage/analytics sinks. The HTML renderer consumes the normalized model, which prevents the UI from becoming tied to a runner.
+QKTestAnalytics separates **collection**, **normalization**, **analytics** and **presentation**. Framework adapters emit a versioned event contract consumed by storage/analytics sinks. The analytics layer consumes stable normalized executions, and the HTML renderer consumes the normalized model, preventing either from becoming tied to a runner.
 
-See [Architecture](docs/ARCHITECTURE.md), [Adapter SDK](docs/ADAPTERS.md), [Competitive analysis](docs/COMPETITIVE-ANALYSIS.md), [Migration](docs/MIGRATION.md), and [Roadmap](docs/ROADMAP.md).
+See [Architecture](docs/ARCHITECTURE.md), [Adapter SDK](docs/ADAPTERS.md), [Cross-run analytics](docs/ANALYTICS.md), [Competitive analysis](docs/COMPETITIVE-ANALYSIS.md), [Migration](docs/MIGRATION.md), and [Roadmap](docs/ROADMAP.md).
 
 ## Current compatibility
 
-The importer understands the JSON hierarchy produced by `@qacgbdt/quality-report-data` 1.1.x and the current/history convention consumed by `@qacgbdt/quality-dashboard` 1.1.x. Existing `qreport-results/media-bucket/reports/{current,rep_*}.json` directories can therefore be rendered without changing historical data.
+The importer understands the JSON hierarchy produced by `@qacgbdt/quality-report-data` 1.1.x and the current/history convention consumed by `@qacgbdt/quality-dashboard` 1.1.x. Existing `qreport-results/media-bucket/reports/{current,rep_*}.json` directories can therefore be rendered or analyzed without changing historical data.
 
 The WDIO/Cucumber adapter writes that same compatibility structure by default through `LegacyQReportSink`, allowing QK frameworks to migrate their lifecycle code without losing existing report history or dashboard compatibility.
 

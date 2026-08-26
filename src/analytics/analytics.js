@@ -43,14 +43,14 @@ export function resolveAnalyticsOptions(options = {}) {
 }
 
 export function median(values = []) {
-  const sorted = values.filter(Number.isFinite).toSorted((a, b) => a - b);
+  const sorted = values.filter(Number.isFinite).slice().sort((a, b) => a - b);
   if (!sorted.length) return 0;
   const middle = Math.floor(sorted.length / 2);
   return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
 export function percentile(values = [], percentileValue = 95) {
-  const sorted = values.filter(Number.isFinite).toSorted((a, b) => a - b);
+  const sorted = values.filter(Number.isFinite).slice().sort((a, b) => a - b);
   if (!sorted.length) return 0;
   const bounded = Math.min(100, Math.max(0, Number(percentileValue) || 0));
   const index = Math.max(0, Math.ceil((bounded / 100) * sorted.length) - 1);
@@ -122,11 +122,14 @@ export function indexExecutionTests(execution = {}) {
 
 export function detectDurationRegression(trend = [], options = {}) {
   const config = resolveAnalyticsOptions(options);
-  const successful = trend.filter(point => isPassedStatus(point.status) && point.durationMs > 0);
-  const current = successful.at(-1);
-  const previous = successful.slice(0, -1).slice(-config.baselineWindow);
+  const current = trend.at(-1);
+  const previous = trend
+    .slice(0, -1)
+    .filter(point => isPassedStatus(point.status) && point.durationMs > 0)
+    .slice(-config.baselineWindow);
 
-  if (!current || previous.length < config.minBaselineSamples) {
+  if (!current || !isPassedStatus(current.status) || current.durationMs <= 0
+    || previous.length < config.minBaselineSamples) {
     return {
       regressed: false,
       baselineSampleSize: previous.length,
@@ -179,8 +182,8 @@ const classify = observations => {
 
 const failureGroupsFor = observationsByTest => {
   const groups = new Map();
-  for (const [stableId, observations] of observationsByTest) {
-    for (const observation of observations) {
+  for (const [stableId, testHistory] of observationsByTest) {
+    for (const observation of testHistory.observations) {
       for (const attempt of observation.attempts) {
         const failure = fingerprintFailure(attempt.error);
         if (!failure) continue;
@@ -301,7 +304,8 @@ export function buildAnalytics(report = {}, options = {}) {
 
   const slowTests = tests
     .filter(test => test.duration.p95Ms > 0)
-    .toSorted((left, right) => right.duration.p95Ms - left.duration.p95Ms
+    .slice()
+    .sort((left, right) => right.duration.p95Ms - left.duration.p95Ms
       || right.duration.medianMs - left.duration.medianMs
       || left.stableId.localeCompare(right.stableId))
     .slice(0, config.slowLimit)
@@ -326,7 +330,7 @@ export function buildAnalytics(report = {}, options = {}) {
   return {
     analyticsVersion: ANALYTICS_VERSION,
     schemaVersion: report.schemaVersion ?? null,
-    generatedAt: report.generatedAt || options.generatedAt || new Date().toISOString(),
+    generatedAt: options.generatedAt || report.generatedAt || new Date().toISOString(),
     config,
     summary: {
       executions: executions.length,

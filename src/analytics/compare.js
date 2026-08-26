@@ -59,7 +59,8 @@ const summarize = tests => {
 };
 
 const durationChange = (base, head, config) => {
-  if (base.durationMs <= 0 || head.durationMs <= 0) return null;
+  if (!isPassedStatus(base.status) || !isPassedStatus(head.status)
+    || base.durationMs <= 0 || head.durationMs <= 0) return null;
   const deltaMs = head.durationMs - base.durationMs;
   const percentDelta = (deltaMs / base.durationMs) * 100;
   return {
@@ -153,9 +154,9 @@ export function compareExecutions(baseExecution, headExecution, options = {}) {
     statusRegressions,
     statusImprovements,
     statusChanges,
-    durationChanges: durationChanges.toSorted((a, b) => b.percentDelta - a.percentDelta),
+    durationChanges: durationChanges.slice().sort((a, b) => b.percentDelta - a.percentDelta),
     durationRegressions: durationChanges.filter(change => change.regressed)
-      .toSorted((a, b) => b.percentDelta - a.percentDelta),
+      .sort((a, b) => b.percentDelta - a.percentDelta),
     newFailureFingerprints,
     resolvedFailureFingerprints
   };

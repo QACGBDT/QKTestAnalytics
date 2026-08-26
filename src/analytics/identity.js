@@ -22,6 +22,7 @@ export function buildTestIdentityKey(test = {}, execution = {}) {
     project: normalizeText(execution.project),
     suite: normalizeText(test.suite),
     name: normalizeText(test.name),
+    browser: normalizeText(test.browser),
     parameters: stableValue(test.parameters ?? test.params)
   });
 }
