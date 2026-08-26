@@ -73,7 +73,7 @@ export interface SaveEvidenceOptions {
 }
 
 export interface EvidenceStore {
-  save(options: SaveEvidenceOptions): EvidenceArtifact;
+  save(options: SaveEvidenceOptions): EvidenceArtifact | Promise<EvidenceArtifact>;
 }
 
 export interface FileEvidenceStoreOptions {
