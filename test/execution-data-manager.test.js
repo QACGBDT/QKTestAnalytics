@@ -3,43 +3,50 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { ExecutionDataManager } from '../src/core/execution-data-manager.js';
+import { ExecutionDataManager } from '../src/index.js';
 
 const tempFile = () => {
-  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'qkta-data-'));
-  return { root, file: path.join(root, 'reports', 'current.json') };
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'qkta-data-'));
+  return { directory, file: path.join(directory, 'reports', 'current.json') };
 };
 
 test('creates storage and saves nested data', () => {
   const { file } = tempFile();
   const manager = new ExecutionDataManager({ filePath: file });
-  manager.saveData('Checkout.pay.test_summary.status', 'PASSED');
-  assert.equal(manager.getDataFromPath('Checkout.pay.test_summary.status'), 'PASSED');
-  assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).Checkout.pay.test_summary.status, 'PASSED');
+
+  manager.saveData('suite.case.status', 'PASSED');
+
+  assert.equal(manager.getDataFromPath('suite.case.status'), 'PASSED');
+  assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).suite.case.status, 'PASSED');
 });
 
 test('preserves existing report content when adding values', () => {
   const { file } = tempFile();
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify({ existing: { value: 1 } }));
+  fs.writeFileSync(file, '{"existing":{"value":1}}\n');
   const manager = new ExecutionDataManager({ filePath: file });
+
   manager.saveData('new.value', 2);
-  const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-  assert.equal(data.existing.value, 1);
-  assert.equal(data.new.value, 2);
+
+  assert.deepEqual(manager.getAllData(), { existing: { value: 1 }, new: { value: 2 } });
 });
 
 test('prefixes routes with an explicit run id', () => {
   const { file } = tempFile();
-  const manager = new ExecutionDataManager({ filePath: file, runId: 'worker-1' });
-  manager.saveData('Checkout.pay.status', 'PASSED');
-  assert.equal(manager.getDataFromPath('worker-1.Checkout.pay.status'), 'PASSED');
+  const manager = new ExecutionDataManager({ filePath: file, runId: 'run-42' });
+
+  manager.saveData('execution_summary.project_name', 'demo');
+
+  const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(raw['run-42'].execution_summary.project_name, 'demo');
+  assert.equal(manager.getDataFromPath('execution_summary.project_name'), 'demo');
 });
 
 test('rejects empty data routes', () => {
   const { file } = tempFile();
   const manager = new ExecutionDataManager({ filePath: file });
-  assert.throws(() => manager.saveData('', 'value'), /route/);
+  assert.throws(() => manager.saveData('', 'value'), /route must contain/);
+  assert.throws(() => manager.getDataFromPath(''), /route must contain/);
 });
 
 test('records deterministic execution lifecycle timing and metadata', () => {
@@ -78,32 +85,39 @@ test('records deterministic module timing and removes completed timer', () => {
   manager.endModule('Login.case');
 
   assert.equal(manager.getDataFromPath('Login.case.test_summary.duration_seconds'), 1.25);
-  assert.equal(manager.moduleTimers.size, 0);
+  assert.equal(manager.moduleTimers.has('Login.case'), false);
 });
 
 test('ending a missing lifecycle timer is a no-op', () => {
   const { file } = tempFile();
   const manager = new ExecutionDataManager({ filePath: file });
-  manager.endModule('missing');
-  assert.equal(manager.getDataFromPath('missing'), undefined);
+
+  assert.equal(manager.recordEnd(), undefined);
+  assert.equal(manager.endModule('missing'), undefined);
+  assert.equal(fs.existsSync(file), false);
 });
 
 test('archives the current report with an injectable id', () => {
-  const { file } = tempFile();
-  const manager = new ExecutionDataManager({ filePath: file, archiveId: () => 'fixed' });
+  const { directory, file } = tempFile();
+  const manager = new ExecutionDataManager({ filePath: file, uuid: () => 'fixed-id' });
   manager.saveData('value', 1);
+
   const archived = manager.archiveCurrentReport();
-  assert.equal(path.basename(archived), 'rep_fixed.json');
-  assert.equal(JSON.parse(fs.readFileSync(archived, 'utf8')).value, 1);
+
+  assert.equal(archived, path.join(directory, 'reports', 'rep_fixed-id.json'));
   assert.equal(fs.existsSync(file), false);
+  assert.equal(JSON.parse(fs.readFileSync(archived, 'utf8')).value, 1);
 });
 
 test('default archive id creates a unique report name', () => {
   const { file } = tempFile();
   const manager = new ExecutionDataManager({ filePath: file });
   manager.saveData('value', 1);
+
   const archived = manager.archiveCurrentReport();
-  assert.match(path.basename(archived), /^rep_[0-9a-f-]+\.json$/i);
+
+  assert.match(path.basename(archived), /^rep_[0-9a-f-]{36}\.json$/);
+  assert.equal(fs.existsSync(archived), true);
 });
 
 test('archive returns null when no current report exists', () => {
@@ -115,21 +129,21 @@ test('archive returns null when no current report exists', () => {
 test('clear resets persisted data and in-memory lifecycle state', () => {
   const { file } = tempFile();
   const manager = new ExecutionDataManager({ filePath: file });
+  manager.globalStartTime = new Date();
+  manager.moduleTimers.set('suite', new Date());
   manager.saveData('value', 1);
-  manager.executionStart = new Date();
-  manager.moduleTimers.set('module', new Date());
 
   manager.clearData();
 
   assert.deepEqual(JSON.parse(fs.readFileSync(file, 'utf8')), {});
-  assert.equal(manager.executionStart, null);
+  assert.equal(manager.globalStartTime, null);
   assert.equal(manager.moduleTimers.size, 0);
 });
 
 test('surfaces malformed JSON instead of silently discarding results', () => {
   const { file } = tempFile();
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, '{invalid');
+  fs.writeFileSync(file, '{invalid-json');
   const manager = new ExecutionDataManager({ filePath: file });
-  assert.throws(() => manager.getDataFromPath('value'), SyntaxError);
+  assert.throws(() => manager.loadData(), SyntaxError);
 });
