@@ -11,6 +11,7 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 - Dependency-free repository lint and source-hygiene checks.
 - Native Node coverage thresholds: 85% lines, 85% functions, and 75% branches.
 - Expanded unit and integration coverage for the canonical model, execution data manager, HTML reporting, and CLI lifecycle.
+- npm consumer smoke testing that packs, installs, imports, and executes the CLI from the generated tarball.
 - CI compatibility testing across Node 20, 22, and 24.
 - `.editorconfig` for consistent public contributions.
 
