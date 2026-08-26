@@ -50,6 +50,23 @@ report.recordEnd();
 buildReport();
 ```
 
+## Development quality gates
+
+All development branches start from and target `develop`. The package deliberately keeps its quality tooling lightweight and reproducible with Node itself.
+
+```bash
+npm ci
+npm run check
+```
+
+On Node 22+, the release-equivalent gate also enforces coverage:
+
+```bash
+npm run quality
+```
+
+The current minimums are **85% line coverage**, **85% function coverage**, and **75% branch coverage**. CI separately verifies runtime compatibility on Node 20, 22, and 24. Publishing to npm runs the same full quality gate before `npm publish`.
+
 ## Architecture
 
 QKTestAnalytics separates **collection**, **normalization**, **analytics** and **presentation**. Framework adapters emit or translate into the versioned canonical model. The HTML renderer consumes only that model, which prevents the UI from becoming tied to a runner.

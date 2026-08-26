@@ -1,25 +1,36 @@
-# Contributing
+# Contributing to QKTestAnalytics
 
-Thanks for contributing to QKTestAnalytics.
+Thank you for helping improve QKTestAnalytics.
 
-## Development
+## Development flow
 
-Requires Node.js 20+.
+`develop` is the integration branch. Create feature, fix, test, or documentation branches from `develop` and target pull requests back to `develop`. `main` is reserved for release-ready changes.
+
+## Local quality gates
+
+QKTestAnalytics intentionally keeps its developer tooling dependency-light. The repository uses Node's test runner and native coverage support plus a repository lint/hygiene gate.
+
+Before opening a pull request, run:
 
 ```bash
 npm ci
-npm test
 npm run check
 ```
 
-Keep framework-specific APIs outside `src/core`. New adapters should translate runner concepts into the canonical model rather than extending core with runner globals.
+On Node 22 or newer, run the complete release-equivalent gate:
 
-## Pull requests
+```bash
+npm run quality
+```
 
-- Keep changes focused and include tests for behavior changes.
-- Update docs/CHANGELOG for user-visible changes.
-- Do not add install-time scripts that invoke other package managers.
-- Avoid mandatory dependencies when a Node standard-library implementation is reasonable.
-- Treat the canonical schema and exported API as compatibility surfaces.
+`npm run quality` requires at least 85% line coverage, 85% function coverage, and 75% branch coverage. It also validates JavaScript syntax, repository text hygiene, architectural guardrails, and the npm package payload.
 
-Use Conventional Commit-style subjects where practical (`feat:`, `fix:`, `docs:`, `chore:`).
+## Expectations
+
+- Add or update tests for behavioral changes.
+- Keep core code independent from test-runner globals; runner behavior belongs in adapters.
+- Do not add install-time side effects such as `postinstall` downloads.
+- Preserve public API compatibility unless a breaking change is explicitly planned and documented.
+- Keep public documentation and `CHANGELOG.md` aligned with externally visible changes.
+
+CI verifies Node 20, 22, and 24 compatibility and runs the complete quality gate on Node 22.

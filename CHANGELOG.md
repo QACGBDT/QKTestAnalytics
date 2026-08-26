@@ -1,22 +1,36 @@
 # Changelog
 
-All notable changes to QKTestAnalytics will be documented here. The project follows Semantic Versioning once the public API reaches 1.0; during 0.x, breaking changes are called out explicitly.
+All notable changes to QKTestAnalytics will be documented in this file.
 
-## [0.1.0] - Unreleased
+The format follows Keep a Changelog principles and this project uses Semantic Versioning once stable public releases begin.
+
+## [Unreleased]
 
 ### Added
-- Consolidated foundation replacing the separate quality-report-data and quality-dashboard packages.
-- Public `qkta` CLI with build, clean and cycle commands.
-- Temporary `qreport-build` and `qreport-cycle` aliases.
-- Versioned canonical result model and legacy QReport importer.
-- Self-contained HTML report with core analytics and filtering.
-- Programmatic data manager and report builder APIs.
-- Node test suite, CI matrix and npm release workflow with provenance.
-- Architecture, competitive analysis, migration, roadmap, contribution and security documentation.
+
+- Dependency-free repository lint and source-hygiene checks.
+- Native Node coverage thresholds: 85% lines, 85% functions, and 75% branches.
+- Expanded unit and integration coverage for the canonical model, execution data manager, HTML reporting, and CLI lifecycle.
+- npm consumer smoke testing that packs, installs, imports, and executes the CLI from the generated tarball.
+- CI compatibility testing across Node 20, 22, and 24.
+- `.editorconfig` for consistent public contributions.
 
 ### Changed
-- Package targets public npm rather than GitHub Packages.
-- Core is framework-neutral rather than directly calling WebdriverIO globals.
 
-### Removed
-- Automatic Python/OpenCV installation during npm postinstall.
+- `develop` is now the integration base for CI and contributor pull requests.
+- npm publishing runs the same quality gate required before release.
+- Execution timing and archive identifiers are injectable to support deterministic tests.
+- Invalid legacy durations and status whitespace are normalized defensively.
+- `clearData()` now resets in-memory execution/module timers as well as persisted data.
+
+## [0.1.0] - 2026-08-26
+
+### Added
+
+- Initial QKTestAnalytics public foundation.
+- Framework-neutral canonical result model and legacy QReport normalization.
+- Local execution data manager and report history compatibility.
+- Self-contained HTML report builder.
+- `qkta` CLI plus `qreport-build` and `qreport-cycle` transition aliases.
+- Node 20/22/24 CI and npm provenance publishing workflow.
+- Architecture, migration, competitive analysis, and product roadmap documentation.
