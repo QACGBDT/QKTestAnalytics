@@ -33,7 +33,12 @@ test('default adapter writes a passing WDIO/Cucumber lifecycle without failure s
     capabilities: { browserName: 'chrome' },
     async takeScreenshot() { screenshots++; return Buffer.from('shot').toString('base64'); }
   };
-  const adapter = createWdioCucumberAdapter({ ...paths, runId: 'worker-1', now: () => 1000 });
+  const adapter = createWdioCucumberAdapter({
+    ...paths,
+    runId: 'worker-1',
+    projectName: 'checkout-suite',
+    now: () => 1000
+  });
 
   await adapter.hooks.before({ browserName: 'chrome' }, ['checkout.feature'], session);
   await adapter.hooks.beforeFeature('checkout.feature', { name: 'Checkout' });
@@ -45,6 +50,7 @@ test('default adapter writes a passing WDIO/Cucumber lifecycle without failure s
   await adapter.hooks.after(0);
 
   const data = JSON.parse(fs.readFileSync(paths.filePath, 'utf8'))['worker-1'];
+  assert.equal(data.execution_summary.project_name, 'checkout-suite');
   assert.equal(data.Checkout['checkout works'].test_summary.status, 'PASSED');
   assert.equal(data.Checkout['checkout works']['I submit payment'].status, 'PASSED');
   assert.equal(data.Checkout['checkout works'].test_summary.browser, 'chrome');

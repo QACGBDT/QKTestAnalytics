@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { ExecutionDataManager } from '../core/execution-data-manager.js';
 import { FileEvidenceStore } from './evidence-store.js';
 import { LegacyQReportSink } from './legacy-qreport-sink.js';
@@ -41,6 +43,7 @@ export class WdioCucumberAdapter {
     this.evidenceStore = options.evidenceStore || new FileEvidenceStore();
     this.capture = options.capture || 'on-failure';
     this.now = options.now || Date.now;
+    this.projectName = options.projectName || null;
     this.onEvidenceError = options.onEvidenceError || (() => {});
     if (!captureModes.has(this.capture)) throw new TypeError(`unsupported evidence capture mode: ${this.capture}`);
 
@@ -225,7 +228,15 @@ export class WdioCucumberAdapter {
   }
 
   #projectName() {
-    return process.env.npm_package_name || process.env.QKTA_PROJECT || 'UNNAMED_PROJECT';
+    if (this.projectName) return this.projectName;
+    if (process.env.QKTA_PROJECT) return process.env.QKTA_PROJECT;
+    if (process.env.npm_package_name) return process.env.npm_package_name;
+    try {
+      const packagePath = path.resolve(process.cwd(), 'package.json');
+      return JSON.parse(fs.readFileSync(packagePath, 'utf8')).name || 'UNNAMED_PROJECT';
+    } catch {
+      return 'UNNAMED_PROJECT';
+    }
   }
 }
 
@@ -256,6 +267,7 @@ export function createWdioCucumberAdapter(options = {}) {
     evidenceStore,
     capture: options.capture,
     now: options.now,
+    projectName: options.projectName,
     onEvidenceError: options.onEvidenceError
   });
 
