@@ -71,6 +71,30 @@ test('target selection truncates baseline history so future executions cannot af
   assert.equal(gate.metrics.durationRegressions, 0);
 });
 
+test('gate forwards duration detector thresholds independently from the allowed regression count', () => {
+  const defaultDetector = buildQualityGate(fixture, {
+    selector: 'c4',
+    minPassRate: 0,
+    maxFailures: 10,
+    maxFlakyRate: 100,
+    maxDurationRegressions: 0
+  });
+  assert.equal(defaultDetector.metrics.durationRegressions, 1);
+  assert.equal(defaultDetector.passed, false);
+
+  const relaxedDetector = buildQualityGate(fixture, {
+    selector: 'c4',
+    minPassRate: 0,
+    maxFailures: 10,
+    maxFlakyRate: 100,
+    maxDurationRegressions: 0,
+    durationRegressionPercent: 60
+  });
+  assert.equal(relaxedDetector.metrics.durationRegressions, 0);
+  assert.equal(relaxedDetector.analyticsConfig.durationRegressionPercent, 60);
+  assert.equal(relaxedDetector.passed, true);
+});
+
 test('gate validates threshold configuration and missing execution data', () => {
   assert.throws(() => resolveGateOptions({ minPassRate: 101 }), /minPassRate/);
   assert.throws(() => resolveGateOptions({ maxFlakyRate: -1 }), /maxFlakyRate/);
