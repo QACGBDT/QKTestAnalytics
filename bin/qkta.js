@@ -2,11 +2,15 @@
 import { spawn } from 'node:child_process';
 import {
   ExecutionDataManager,
+  GATE_EXIT_CODE,
   buildAnalytics,
+  buildQualityGate,
   buildReport,
   compareReportExecutions,
+  formatGateSummary,
   loadLegacyDirectory,
   normalizeLegacyReport,
+  writeGateSummary,
   writeJsonArtifact
 } from '../src/index.js';
 
@@ -31,6 +35,14 @@ const analyticsOptions = () => ({
   durationRegressionMinMs: numberValue('--regression-min-ms', 100),
   slowLimit: numberValue('--slow-limit', 10)
 });
+const gateOptions = () => ({
+  ...analyticsOptions(),
+  minPassRate: value('--min-pass-rate', 100),
+  maxFailures: value('--max-failures', 0),
+  maxFlakyRate: value('--max-flaky-rate', 0),
+  maxDurationRegressions: value('--max-duration-regressions', 0),
+  selector: value('--target', value('--head', null))
+});
 const loadModel = reportsDir => normalizeLegacyReport(loadLegacyDirectory(reportsDir));
 
 const printHelp = () => {
@@ -41,8 +53,15 @@ const printHelp = () => {
     '  qkta build [--input DIR] [--output FILE]',
     '  qkta analyze [--input DIR] [--output FILE] [analytics thresholds]',
     '  qkta compare --base REF --head REF [--input DIR] [--output FILE] [analytics thresholds]',
+    '  qkta gate [--target REF] [--input DIR] [--output FILE] [--summary FILE] [gate thresholds]',
     '  qkta clean [--input FILE]',
     '  qkta cycle [--new|--continue] -- <command> [args...]',
+    '',
+    'Quality-gate thresholds:',
+    '  --min-pass-rate N             Minimum pass rate percent (default: 100)',
+    '  --max-failures N              Maximum final failures (default: 0)',
+    '  --max-flaky-rate N            Maximum flaky rate percent (default: 0)',
+    '  --max-duration-regressions N  Maximum regressed tests (default: 0)',
     '',
     'Analytics thresholds:',
     '  --baseline-window N       Previous successful samples (default: 5)',
@@ -51,7 +70,8 @@ const printHelp = () => {
     '  --regression-min-ms N     Minimum absolute increase (default: 100)',
     '  --slow-limit N            Slow-test ranking size (default: 10)',
     '',
-    'Compare REF may be an execution id, cycle, branch, commit or project; the latest match is selected.',
+    'Gate exit codes: 0=pass, 1=usage/data/config error, 2=quality-gate violation.',
+    'REF may be an execution id, cycle, branch, commit or project; the latest match is selected.',
     'Legacy aliases: qreport-build, qreport-cycle'
   ].join('\n'));
 };
@@ -85,6 +105,22 @@ if (command === 'build') {
       console.error(`[QKTestAnalytics] ${error.message}`);
       process.exitCode = 1;
     }
+  }
+} else if (command === 'gate') {
+  try {
+    const input = value('--input', 'qreport-results/media-bucket/reports');
+    const output = value('--output', 'qreport-results/gate.json');
+    const summaryOutput = value('--summary', null);
+    const gate = buildQualityGate(loadModel(input), gateOptions());
+    writeJsonArtifact(gate, output);
+    if (summaryOutput) writeGateSummary(gate, summaryOutput);
+    console.log(formatGateSummary(gate));
+    console.log(`[QKTestAnalytics] Gate JSON: ${output}`);
+    if (summaryOutput) console.log(`[QKTestAnalytics] Gate summary: ${summaryOutput}`);
+    process.exitCode = gate.passed ? GATE_EXIT_CODE.PASS : GATE_EXIT_CODE.VIOLATION;
+  } catch (error) {
+    console.error(`[QKTestAnalytics] ${error.message}`);
+    process.exitCode = GATE_EXIT_CODE.ERROR;
   }
 } else if (command === 'clean') {
   const manager = new ExecutionDataManager({
