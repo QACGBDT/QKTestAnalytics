@@ -36,7 +36,7 @@
     "qreport-build": "./bin/qkta.js",
     "qreport-cycle": "./bin/qkta.js"
   },
-  "files": ["bin", "src", "README.md", "LICENSE", "CHANGELOG.md"],
+  "files": ["bin", "src", "docs", "README.md", "LICENSE", "CHANGELOG.md"],
   "scripts": {
     "lint": "node ./scripts/lint.js",
     "test": "node --test",

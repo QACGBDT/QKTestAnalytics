@@ -70,14 +70,11 @@ try {
 
   run(process.execPath, [smokeFile], { cwd: consumer });
 
-  const installedCli = path.join(
-    consumer,
-    'node_modules',
-    'qk-test-analytics',
-    'bin',
-    'qkta.js'
-  );
+  const installedPackage = path.join(consumer, 'node_modules', 'qk-test-analytics');
+  const installedCli = path.join(installedPackage, 'bin', 'qkta.js');
+  const installedAnalyticsDoc = path.join(installedPackage, 'docs', 'ANALYTICS.md');
   if (!fs.existsSync(installedCli)) throw new Error('Published package is missing the qkta CLI');
+  if (!fs.existsSync(installedAnalyticsDoc)) throw new Error('Published package is missing analytics documentation');
 
   const help = run(process.execPath, [installedCli, '--help'], { cwd: consumer });
   if (!help.stdout.includes('qkta build') || !help.stdout.includes('qkta analyze') || !help.stdout.includes('qkta compare')) {
