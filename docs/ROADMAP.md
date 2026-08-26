@@ -32,10 +32,15 @@ Implemented core in issue #3:
 
 ## 0.4 — CI quality gates
 
-- Thresholds for pass rate, failures, flaky rate and duration regression.
-- Non-zero CLI exit codes and JSON gate output.
-- GitHub Actions examples and PR summary generation.
-- Artifact size/performance budgets.
+Implemented core in issue #4:
+
+- Configurable thresholds for pass rate, failures, flaky rate and duration regressions.
+- Deterministic CLI exit codes and machine-readable JSON gate output.
+- Human-readable console summary plus GitHub-flavored Markdown PR/check summary.
+- Target-aware baseline selection with future-run isolation.
+- GitHub Actions example that preserves report/gate artifacts before enforcing the decision.
+
+Follow-up hardening can add artifact-size and execution-performance budgets after representative large-suite benchmarks are available.
 
 ## 0.5 — Extension ecosystem
 
