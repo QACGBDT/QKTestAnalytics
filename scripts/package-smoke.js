@@ -33,8 +33,12 @@ try {
   ], { cwd: process.cwd() });
 
   const metadata = JSON.parse(packed.stdout);
-  const filename = metadata[0]?.filename;
+  const packageMetadata = metadata[0];
+  const filename = packageMetadata?.filename;
   if (!filename) throw new Error('npm pack did not return a tarball filename');
+  if (packageMetadata.name !== '@qacg/qk-test-analytics' || packageMetadata.version !== '0.4.0') {
+    throw new Error(`Unexpected packed identity: ${packageMetadata.name}@${packageMetadata.version}`);
+  }
 
   const tarball = path.join(workspace, filename);
   fs.writeFileSync(path.join(consumer, 'package.json'), '{"private":true,"type":"module"}\n');
@@ -75,6 +79,11 @@ try {
   run(process.execPath, [smokeFile], { cwd: consumer });
 
   const installedPackage = path.join(consumer, 'node_modules', '@qacg', 'qk-test-analytics');
+  const installedManifest = JSON.parse(fs.readFileSync(path.join(installedPackage, 'package.json'), 'utf8'));
+  if (installedManifest.name !== '@qacg/qk-test-analytics' || installedManifest.version !== '0.4.0') {
+    throw new Error(`Unexpected installed identity: ${installedManifest.name}@${installedManifest.version}`);
+  }
+
   const installedCli = path.join(installedPackage, 'bin', 'qkta.js');
   const installedAnalyticsDoc = path.join(installedPackage, 'docs', 'ANALYTICS.md');
   const installedGateDoc = path.join(installedPackage, 'docs', 'QUALITY-GATES.md');
