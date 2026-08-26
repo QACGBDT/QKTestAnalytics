@@ -6,13 +6,17 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-26
+
+First public npm release under `@qacg/qk-test-analytics`, completing the 0.2 Adapter SDK, 0.3 analytics and 0.4 CI quality-gate roadmap milestones on top of the 0.1 foundation.
+
 ### Added
 
 - `qkta gate` command with configurable pass-rate, failure, flaky-rate and duration-regression thresholds.
 - Stable quality-gate exit codes: `0` pass, `1` usage/data/configuration error and `2` quality violation.
 - Machine-readable gate JSON plus human console and GitHub-flavored Markdown summaries.
 - Target-aware quality evaluation that truncates analytics history at the selected run/branch/commit/project.
-- Public quality-gate API and TypeScript declarations through `qk-test-analytics/analytics`.
+- Public quality-gate API and TypeScript declarations through `@qacg/qk-test-analytics/analytics`.
 - GitHub Actions quality-gate example that publishes a job/check summary and uploads report/gate artifacts before enforcement.
 - Auditable baseline, formula and threshold documentation in `docs/QUALITY-GATES.md`.
 - Pass/fail/boundary/error tests for programmatic and CLI gate flows.
@@ -22,7 +26,7 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 - Normalized failure fingerprints and recurring-failure grouping.
 - Execution comparison by run id, cycle, branch, commit or project with status/duration/fingerprint deltas.
 - `qkta analyze` and `qkta compare` machine-readable JSON export commands.
-- Public analytics API at `qk-test-analytics/analytics` plus TypeScript declarations.
+- Public analytics API at `@qacg/qk-test-analytics/analytics` plus TypeScript declarations.
 - Auditable analytics formulas and threshold semantics in `docs/ANALYTICS.md`.
 - Deterministic historical fixtures covering retries, flakiness, duration regressions and recurring failures.
 - Versioned reporter event contract and `ReporterRuntime` sink pipeline.
@@ -30,7 +34,7 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 - `FileEvidenceStore` with legacy-compatible screenshot paths and general attachment storage.
 - `LegacyQReportSink` that maps adapter events back to existing QReport JSON during migration.
 - WDIO screenshot policies (`never`, `on-failure`, `always`) and custom evidence attachment API.
-- Public adapter exports at `qk-test-analytics/adapters` and `qk-test-analytics/adapters/wdio-cucumber`.
+- Public adapter exports at `@qacg/qk-test-analytics/adapters` and `@qacg/qk-test-analytics/adapters/wdio-cucumber`.
 - Adapter SDK documentation with a minimal custom-adapter example.
 - Pass/fail/error/evidence integration tests for the WDIO/Cucumber adapter and legacy bridge.
 - Dependency-free repository lint and source-hygiene checks.
@@ -38,14 +42,17 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 - Expanded unit and integration coverage for the canonical model, execution data manager, HTML reporting, and CLI lifecycle.
 - npm consumer smoke testing that packs, installs, imports, and executes the CLI from the generated tarball.
 - CI compatibility testing across Node 20, 22, and 24.
+- Secure npm release documentation and first-publish bootstrap guidance in `docs/RELEASING.md`.
 - `.editorconfig` for consistent public contributions.
 
 ### Changed
 
+- npm identity is now the organization-scoped public package `@qacg/qk-test-analytics`.
+- Release publishing validates `v<version>` tags, requires the release commit to be contained in `main`, and is ready for npm Trusted Publishing/OIDC.
 - Stable identity explicitly separates browser variants to avoid false retry/flakiness classification.
 - Runner lifecycle behavior is now owned by adapters rather than core utilities.
 - The WDIO adapter keeps the explicitly passed session instance instead of reading a global `browser`.
-- `develop` is now the integration base for CI and contributor pull requests.
+- `develop` is the integration base for contributor pull requests; `main` is the release source.
 - npm publishing runs the same quality gate required before release.
 - Execution timing and archive identifiers are injectable to support deterministic tests.
 - Invalid legacy durations and status whitespace are normalized defensively.
@@ -55,7 +62,7 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ### Added
 
-- Initial QKTestAnalytics public foundation.
+- Initial QKTestAnalytics public foundation milestone.
 - Framework-neutral canonical result model and legacy QReport normalization.
 - Local execution data manager and report history compatibility.
 - Self-contained HTML report builder.

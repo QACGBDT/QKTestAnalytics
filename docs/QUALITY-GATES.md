@@ -170,7 +170,7 @@ import {
   GATE_EXIT_CODE,
   buildQualityGate,
   formatGateMarkdown
-} from 'qk-test-analytics/analytics';
+} from '@qacg/qk-test-analytics/analytics';
 
 const gate = buildQualityGate(report, {
   selector: 'feature/checkout',

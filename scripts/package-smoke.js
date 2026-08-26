@@ -50,12 +50,12 @@ try {
 
   const smokeFile = path.join(consumer, 'smoke.mjs');
   fs.writeFileSync(smokeFile, [
-    "import * as api from 'qk-test-analytics';",
-    "import { buildReport } from 'qk-test-analytics/reporter';",
-    "import { ExecutionDataManager } from 'qk-test-analytics/data';",
-    "import { buildAnalytics, buildQualityGate, compareExecutions, GATE_EXIT_CODE } from 'qk-test-analytics/analytics';",
-    "import { ReporterRuntime } from 'qk-test-analytics/adapters';",
-    "import { createWdioCucumberAdapter } from 'qk-test-analytics/adapters/wdio-cucumber';",
+    "import * as api from '@qacg/qk-test-analytics';",
+    "import { buildReport } from '@qacg/qk-test-analytics/reporter';",
+    "import { ExecutionDataManager } from '@qacg/qk-test-analytics/data';",
+    "import { buildAnalytics, buildQualityGate, compareExecutions, GATE_EXIT_CODE } from '@qacg/qk-test-analytics/analytics';",
+    "import { ReporterRuntime } from '@qacg/qk-test-analytics/adapters';",
+    "import { createWdioCucumberAdapter } from '@qacg/qk-test-analytics/adapters/wdio-cucumber';",
     "const required = ['ExecutionDataManager', 'buildReport', 'normalizeLegacyReport', 'summarizeExecutions', 'SCHEMA_VERSION', 'buildAnalytics', 'buildQualityGate', 'compareExecutions', 'GATE_EXIT_CODE', 'ReporterRuntime', 'createWdioCucumberAdapter'];",
     "for (const name of required) if (!(name in api)) throw new Error(`Missing export: ${name}`);",
     "if (api.SCHEMA_VERSION !== '1.0') throw new Error('Unexpected schema version');",
@@ -74,7 +74,7 @@ try {
 
   run(process.execPath, [smokeFile], { cwd: consumer });
 
-  const installedPackage = path.join(consumer, 'node_modules', 'qk-test-analytics');
+  const installedPackage = path.join(consumer, 'node_modules', '@qacg', 'qk-test-analytics');
   const installedCli = path.join(installedPackage, 'bin', 'qkta.js');
   const installedAnalyticsDoc = path.join(installedPackage, 'docs', 'ANALYTICS.md');
   const installedGateDoc = path.join(installedPackage, 'docs', 'QUALITY-GATES.md');

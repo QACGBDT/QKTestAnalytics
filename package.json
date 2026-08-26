@@ -1,6 +1,6 @@
 {
-  "name": "qk-test-analytics",
-  "version": "0.1.0",
+  "name": "@qacg/qk-test-analytics",
+  "version": "0.4.0",
   "description": "Open, framework-agnostic test analytics and reporting for Quality & Knowledge.",
   "type": "module",
   "main": "./src/index.js",
@@ -50,11 +50,25 @@
   },
   "engines": { "node": ">=20" },
   "keywords": ["testing", "test-report", "test-analytics", "qa", "quality-engineering", "cucumber", "webdriverio", "playwright", "allure-alternative"],
-  "author": "Quality & Knowledge",
+  "author": {
+    "name": "Quality & Knowledge",
+    "email": "eric.pereyra@icloud.com",
+    "url": "https://github.com/isopropilick"
+  },
+  "maintainers": [
+    {
+      "name": "isopropilick",
+      "email": "eric.pereyra@icloud.com"
+    }
+  ],
   "license": "Apache-2.0",
   "repository": { "type": "git", "url": "git+https://github.com/QACGBDT/QKTestAnalytics.git" },
   "bugs": { "url": "https://github.com/QACGBDT/QKTestAnalytics/issues" },
   "homepage": "https://github.com/QACGBDT/QKTestAnalytics#readme",
-  "publishConfig": { "access": "public", "provenance": true },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "provenance": true
+  },
   "dependencies": {}
 }

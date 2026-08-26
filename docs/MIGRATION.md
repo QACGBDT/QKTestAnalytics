@@ -23,7 +23,7 @@ Remove the two old dependencies and install one:
 
 ```bash
 npm remove @qacgbdt/quality-report-data @qacgbdt/quality-dashboard
-npm install -D qk-test-analytics
+npm install -D @qacg/qk-test-analytics
 ```
 
 Existing scripts can temporarily keep `qreport-build` / `qreport-cycle`, then migrate to `qkta` commands.
@@ -37,5 +37,5 @@ Do not delete historical JSON. The compatibility importer reads the existing `cu
 - Core no longer assumes a WebdriverIO global `browser`; screenshots belong to the WDIO adapter.
 - Report installation never invokes pip.
 - Video generation is not automatic in the foundation release.
-- Package publishing targets the public npm registry rather than GitHub Packages.
+- The consolidated public package is published as `@qacg/qk-test-analytics` on the npm registry rather than GitHub Packages.
 - The product name in user-facing output is QKTestAnalytics; QReport names remain only for transition compatibility.
