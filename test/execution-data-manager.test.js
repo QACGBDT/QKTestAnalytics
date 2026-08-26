@@ -65,6 +65,17 @@ test('records deterministic execution lifecycle timing and metadata', () => {
   assert.equal(summary.global_time_seconds, 2.5);
 });
 
+test('default lifecycle metadata reads the host package and clock', () => {
+  const { file } = tempFile();
+  const manager = new ExecutionDataManager({ filePath: file });
+
+  manager.recordStart();
+
+  const summary = manager.getDataFromPath('execution_summary');
+  assert.equal(summary.project_name, 'qk-test-analytics');
+  assert.match(summary.global_start_time, /^\d{4}-\d{2}-\d{2}T/);
+});
+
 test('records deterministic module timing and removes completed timer', () => {
   const { file } = tempFile();
   const times = ['2026-01-01T00:00:00.000Z', '2026-01-01T00:00:01.250Z'];
@@ -96,6 +107,17 @@ test('archives the current report with an injectable id', () => {
   assert.equal(archived, path.join(directory, 'reports', 'rep_fixed-id.json'));
   assert.equal(fs.existsSync(file), false);
   assert.equal(JSON.parse(fs.readFileSync(archived, 'utf8')).value, 1);
+});
+
+test('default archive id creates a unique report name', () => {
+  const { file } = tempFile();
+  const manager = new ExecutionDataManager({ filePath: file });
+  manager.saveData('value', 1);
+
+  const archived = manager.archiveCurrentReport();
+
+  assert.match(path.basename(archived), /^rep_[0-9a-f-]{36}\.json$/);
+  assert.equal(fs.existsSync(archived), true);
 });
 
 test('archive returns null when no current report exists', () => {
