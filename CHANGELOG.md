@@ -8,6 +8,14 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ### Added
 
+- Versioned reporter event contract and `ReporterRuntime` sink pipeline.
+- Official dependency-free WebdriverIO + Cucumber hook adapter.
+- `FileEvidenceStore` with legacy-compatible screenshot paths and general attachment storage.
+- `LegacyQReportSink` that maps adapter events back to existing QReport JSON during migration.
+- WDIO screenshot policies (`never`, `on-failure`, `always`) and custom evidence attachment API.
+- Public adapter exports at `qk-test-analytics/adapters` and `qk-test-analytics/adapters/wdio-cucumber`.
+- Adapter SDK documentation with a minimal custom-adapter example.
+- Pass/fail/error/evidence integration tests for the WDIO/Cucumber adapter and legacy bridge.
 - Dependency-free repository lint and source-hygiene checks.
 - Native Node coverage thresholds: 85% lines, 85% functions, and 75% branches.
 - Expanded unit and integration coverage for the canonical model, execution data manager, HTML reporting, and CLI lifecycle.
@@ -17,6 +25,8 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ### Changed
 
+- Runner lifecycle behavior is now owned by adapters rather than core utilities.
+- The WDIO adapter keeps the explicitly passed session instance instead of reading a global `browser`.
 - `develop` is now the integration base for CI and contributor pull requests.
 - npm publishing runs the same quality gate required before release.
 - Execution timing and archive identifiers are injectable to support deterministic tests.

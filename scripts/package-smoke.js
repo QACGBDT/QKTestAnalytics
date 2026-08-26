@@ -53,11 +53,15 @@ try {
     "import * as api from 'qk-test-analytics';",
     "import { buildReport } from 'qk-test-analytics/reporter';",
     "import { ExecutionDataManager } from 'qk-test-analytics/data';",
-    "const required = ['ExecutionDataManager', 'buildReport', 'normalizeLegacyReport', 'summarizeExecutions', 'SCHEMA_VERSION'];",
+    "import { ReporterRuntime } from 'qk-test-analytics/adapters';",
+    "import { createWdioCucumberAdapter } from 'qk-test-analytics/adapters/wdio-cucumber';",
+    "const required = ['ExecutionDataManager', 'buildReport', 'normalizeLegacyReport', 'summarizeExecutions', 'SCHEMA_VERSION', 'ReporterRuntime', 'createWdioCucumberAdapter'];",
     "for (const name of required) if (!(name in api)) throw new Error(`Missing export: ${name}`);",
     "if (api.SCHEMA_VERSION !== '1.0') throw new Error('Unexpected schema version');",
     "if (api.buildReport !== buildReport) throw new Error('Reporter subpath export is inconsistent');",
-    "if (api.ExecutionDataManager !== ExecutionDataManager) throw new Error('Data subpath export is inconsistent');"
+    "if (api.ExecutionDataManager !== ExecutionDataManager) throw new Error('Data subpath export is inconsistent');",
+    "if (api.ReporterRuntime !== ReporterRuntime) throw new Error('Adapters subpath export is inconsistent');",
+    "if (api.createWdioCucumberAdapter !== createWdioCucumberAdapter) throw new Error('WDIO adapter subpath export is inconsistent');"
   ].join('\n'), 'utf8');
 
   run(process.execPath, [smokeFile], { cwd: consumer });

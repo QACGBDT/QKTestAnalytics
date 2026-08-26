@@ -7,7 +7,9 @@
   "exports": {
     ".": "./src/index.js",
     "./reporter": "./src/report/build-report.js",
-    "./data": "./src/core/execution-data-manager.js"
+    "./data": "./src/core/execution-data-manager.js",
+    "./adapters": "./src/adapters/index.js",
+    "./adapters/wdio-cucumber": "./src/adapters/wdio-cucumber.js"
   },
   "bin": {
     "qkta": "./bin/qkta.js",
