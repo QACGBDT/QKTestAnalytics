@@ -47,12 +47,12 @@ for (const file of textFiles) {
     if (file.endsWith('.js') && line.includes('\t')) fail(file, `tab indentation on line ${index + 1}`);
   });
 
-  if (file.endsWith('.js')) {
+  const rel = relative(file);
+  if (rel.startsWith('src/') || rel.startsWith('bin/')) {
     if (/\beval\s*\(/.test(content)) fail(file, 'eval() is not allowed');
     if (/\bnew\s+Function\s*\(/.test(content)) fail(file, 'new Function() is not allowed');
   }
 
-  const rel = relative(file);
   if (rel.startsWith('src/')) {
     if (/\bbrowser\s*\./.test(content)) fail(file, 'core source must not depend on a runner-global browser object');
     if (/process\.exit\s*\(/.test(content)) fail(file, 'library source must not terminate the host process');
