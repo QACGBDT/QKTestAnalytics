@@ -9,7 +9,7 @@ QKTestAnalytics is published as the public npm organization package `@qacg/qk-te
 - A GitHub Release is created from a tag named exactly `v<package.version>` on `main`.
 - `.github/workflows/publish.yml` rejects a mismatched tag or a release commit that is not contained in `main`.
 
-For the first public release, the expected tag is `v0.4.0`.
+The public package has been bootstrapped. The current patch line is `0.4.1`; future releases use tags that match the version in `package.json`.
 
 ## Quality before publish
 
@@ -29,8 +29,8 @@ npm Trusted Publishing can only be configured after the package exists. The firs
 1. Confirm the npm organization `qacg` exists and the publishing npm account has permission to create public packages in the `@qacg` scope.
 2. Confirm npm username `isopropilick` is a member of the organization and has read/write access through the organization `developers` team or another write-enabled team.
 3. Create a temporary granular npm token that can publish `@qacg/qk-test-analytics` and place it in the GitHub repository/environment secret `NPM_TOKEN`.
-4. Merge the release changes to `main` and publish GitHub Release `v0.4.0`.
-5. Verify the package exists publicly as `@qacg/qk-test-analytics`.
+4. Merge the release changes to `main` and publish the GitHub Release matching the selected package version.
+5. Verify the selected version exists publicly as `@qacg/qk-test-analytics`.
 
 The token is a bootstrap fallback only and should not remain the long-term publisher credential.
 
