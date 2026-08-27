@@ -6,6 +6,15 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ## [Unreleased]
 
+### Fixed
+
+- The official WDIO/Cucumber adapter now generates a stable run envelope by default, and the legacy normalizer recognizes canonical, bare-execution and historical project-root reports without manufacturing `UNKNOWN` pseudo-tests.
+- Unsupported legacy layouts now produce diagnostics and are shown as import warnings in generated HTML reports.
+
+### Security
+
+- Added pre-sink redaction for WDIO/Cucumber scenario and step labels, errors and custom evidence names, with configurable literals, regular-expression patterns and strict fail-fast mode.
+
 ## [0.4.0] - 2026-08-26
 
 First public npm release under `@qacg/qk-test-analytics`, completing the 0.2 Adapter SDK, 0.3 analytics and 0.4 CI quality-gate roadmap milestones on top of the 0.1 foundation.
