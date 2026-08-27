@@ -33,7 +33,7 @@ A **producer adapter** owns runner-specific hooks and calls `runtime.emit(...)`.
 import {
   ReporterEventType,
   ReporterRuntime
-} from 'qk-test-analytics/adapters';
+} from '@qacg/qk-test-analytics/adapters';
 
 const runtime = new ReporterRuntime({
   source: 'my-runner',
@@ -73,7 +73,7 @@ Adapters should never import a runner global into `src/core`. Runner objects bel
 The official WDIO/Cucumber integration uses WebdriverIO configuration hooks. WebdriverIO passes the browser/session instance into `before(capabilities, specs, browser)`, so QKTestAnalytics stores that instance inside the adapter rather than reading a global `browser` object.
 
 ```js
-import { createWdioCucumberAdapter } from 'qk-test-analytics/adapters/wdio-cucumber';
+import { createWdioCucumberAdapter } from '@qacg/qk-test-analytics/adapters/wdio-cucumber';
 
 const qkta = createWdioCucumberAdapter({
   capture: 'on-failure'

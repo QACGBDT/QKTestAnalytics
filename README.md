@@ -2,7 +2,7 @@
 
 Open, framework-agnostic test analytics and reporting from **Quality & Knowledge (QK)**. QKTestAnalytics consolidates the former `quality-report-data` and `quality-dashboard` projects into one public npm package and one stable reporting contract.
 
-> Status: **0.1.x foundation**. The legacy QReport JSON format is supported while adapters, cross-run analytics and CI quality gates are added.
+> Status: **0.4.x public release**. The package now includes the framework-neutral core, Adapter SDK, cross-run analytics and CI quality gates while preserving legacy QReport compatibility.
 
 ## Why QKTestAnalytics
 
@@ -17,7 +17,7 @@ Open, framework-agnostic test analytics and reporting from **Quality & Knowledge
 ## Install
 
 ```bash
-npm install -D qk-test-analytics
+npm install -D @qacg/qk-test-analytics
 ```
 
 ## CLI
@@ -63,7 +63,7 @@ A complete GitHub Actions example is provided at [`examples/github-actions/qkta-
 QKTestAnalytics includes its first official adapter without adding a mandatory WebdriverIO dependency to the package:
 
 ```js
-import { createWdioCucumberAdapter } from 'qk-test-analytics/adapters/wdio-cucumber';
+import { createWdioCucumberAdapter } from '@qacg/qk-test-analytics/adapters/wdio-cucumber';
 
 const qkta = createWdioCucumberAdapter({
   capture: 'on-failure'
@@ -88,7 +88,7 @@ import {
   buildAnalytics,
   buildQualityGate,
   buildReport
-} from 'qk-test-analytics';
+} from '@qacg/qk-test-analytics';
 
 const report = new ExecutionDataManager();
 report.recordStart({ projectName: 'checkout', framework: 'webdriverio' });
@@ -111,7 +111,7 @@ const gate = buildQualityGate(normalizedReport, {
 });
 ```
 
-Adapter primitives are available from `qk-test-analytics/adapters`; analytics and quality-gate primitives are also available from `qk-test-analytics/analytics`.
+Adapter primitives are available from `@qacg/qk-test-analytics/adapters`; analytics and quality-gate primitives are also available from `@qacg/qk-test-analytics/analytics`.
 
 ## Development quality gates
 
@@ -130,11 +130,15 @@ npm run quality
 
 The current minimums are **85% line coverage**, **85% function coverage**, and **75% branch coverage**. CI separately verifies runtime compatibility on Node 20, 22, and 24. Publishing to npm runs the same full quality gate before `npm publish`.
 
+## Releasing
+
+The public package is `@qacg/qk-test-analytics`. Release tags must match `v<package.version>` and point to a commit contained in `main`; publishing then runs from the GitHub Release event. See [Releasing to npm](docs/RELEASING.md) for the first-publish bootstrap, Trusted Publishing/OIDC setup and maintainer verification.
+
 ## Architecture
 
 QKTestAnalytics separates **collection**, **normalization**, **analytics** and **presentation**. Framework adapters emit a versioned event contract consumed by storage/analytics sinks. The analytics layer consumes stable normalized executions, and the HTML renderer consumes the normalized model, preventing either from becoming tied to a runner.
 
-See [Architecture](docs/ARCHITECTURE.md), [Adapter SDK](docs/ADAPTERS.md), [Cross-run analytics](docs/ANALYTICS.md), [CI quality gates](docs/QUALITY-GATES.md), [Competitive analysis](docs/COMPETITIVE-ANALYSIS.md), [Migration](docs/MIGRATION.md), and [Roadmap](docs/ROADMAP.md).
+See [Architecture](docs/ARCHITECTURE.md), [Adapter SDK](docs/ADAPTERS.md), [Cross-run analytics](docs/ANALYTICS.md), [CI quality gates](docs/QUALITY-GATES.md), [Competitive analysis](docs/COMPETITIVE-ANALYSIS.md), [Migration](docs/MIGRATION.md), [Releasing](docs/RELEASING.md), and [Roadmap](docs/ROADMAP.md).
 
 ## Current compatibility
 

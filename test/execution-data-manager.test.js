@@ -72,7 +72,7 @@ test('default lifecycle metadata reads the host package and clock', () => {
   manager.recordStart();
 
   const summary = manager.getDataFromPath('execution_summary');
-  assert.equal(summary.project_name, 'qk-test-analytics');
+  assert.equal(summary.project_name, '@qacg/qk-test-analytics');
   assert.match(summary.global_start_time, /^\d{4}-\d{2}-\d{2}T/);
 });
 

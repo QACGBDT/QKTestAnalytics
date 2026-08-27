@@ -1,6 +1,6 @@
 # Cross-run analytics
 
-QKTestAnalytics analytics are deterministic, local-first and designed to be auditable in CI. The analytics contract is versioned independently as `analyticsVersion: "1.0"` and is available programmatically from `qk-test-analytics/analytics` or through `qkta analyze` / `qkta compare`.
+QKTestAnalytics analytics are deterministic, local-first and designed to be auditable in CI. The analytics contract is versioned independently as `analyticsVersion: "1.0"` and is available programmatically from `@qacg/qk-test-analytics/analytics` or through `qkta analyze` / `qkta compare`.
 
 ## Stable test identity
 
@@ -110,4 +110,4 @@ Thresholds are configurable on both commands:
 --slow-limit 10
 ```
 
-These commands only produce JSON; they do not impose quality-gate exit codes. Policy enforcement belongs to the separate CI-gates roadmap item so analytics remain descriptive and reusable.
+These commands only produce JSON; they do not impose quality-gate exit codes. Policy enforcement belongs to `qkta gate` so analytics remain descriptive and reusable.
