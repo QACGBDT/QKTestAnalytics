@@ -157,3 +157,7 @@ const qkta = createWdioCucumberAdapter({
 5. Store large evidence as references, not inline blobs in result JSON.
 6. Do not add installation side effects or invoke secondary package managers.
 7. Add pass, fail, error and evidence integration tests for every official adapter.
+
+## QKForce CWQ compatibility
+
+QKForce's fixed CWQ template pins this package at `0.4.1` and invokes the WDIO/Cucumber adapter through `qkta cycle --new -- npm run test:wdio`. The adapter produces report evidence only; execution configuration and test-data provenance belong to the QKForce package/result contracts, not to QKTestAnalytics. Keep integration changes covered by the package's Node 20/22/24 quality gates.
