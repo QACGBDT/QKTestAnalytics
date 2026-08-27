@@ -6,6 +6,10 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.4.1] - 2026-08-27
+
 ### Fixed
 
 - The official WDIO/Cucumber adapter now generates a stable run envelope by default, and the legacy normalizer recognizes canonical, bare-execution and historical project-root reports without manufacturing `UNKNOWN` pseudo-tests.
