@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'qkta-package-'));
 const consumer = path.join(workspace, 'consumer');
+const manifest = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
 fs.mkdirSync(consumer, { recursive: true });
 
 function run(command, args, options = {}) {
@@ -23,6 +24,21 @@ function run(command, args, options = {}) {
   return result;
 }
 
+function resolvePackMetadata(metadata) {
+  if (Array.isArray(metadata)) return metadata[0] ?? null;
+  if (!metadata || typeof metadata !== 'object') return null;
+  if (metadata.filename) return metadata;
+
+  const entries = Object.values(metadata).filter(
+    entry => entry && typeof entry === 'object' && entry.filename
+  );
+
+  if (entries.length === 1) return entries[0];
+  return entries.find(
+    entry => entry.name === manifest.name && entry.version === manifest.version
+  ) ?? null;
+}
+
 try {
   const packed = run(npm, [
     'pack',
@@ -33,10 +49,10 @@ try {
   ], { cwd: process.cwd() });
 
   const metadata = JSON.parse(packed.stdout);
-  const packageMetadata = metadata[0];
+  const packageMetadata = resolvePackMetadata(metadata);
   const filename = packageMetadata?.filename;
   if (!filename) throw new Error('npm pack did not return a tarball filename');
-  if (packageMetadata.name !== '@qacg/qk-test-analytics' || packageMetadata.version !== '0.4.0') {
+  if (packageMetadata.name !== manifest.name || packageMetadata.version !== manifest.version) {
     throw new Error(`Unexpected packed identity: ${packageMetadata.name}@${packageMetadata.version}`);
   }
 
@@ -80,7 +96,7 @@ try {
 
   const installedPackage = path.join(consumer, 'node_modules', '@qacg', 'qk-test-analytics');
   const installedManifest = JSON.parse(fs.readFileSync(path.join(installedPackage, 'package.json'), 'utf8'));
-  if (installedManifest.name !== '@qacg/qk-test-analytics' || installedManifest.version !== '0.4.0') {
+  if (installedManifest.name !== manifest.name || installedManifest.version !== manifest.version) {
     throw new Error(`Unexpected installed identity: ${installedManifest.name}@${installedManifest.version}`);
   }
 
@@ -99,7 +115,7 @@ try {
     throw new Error('Installed qkta CLI help is invalid');
   }
 
-  console.log('[QKTestAnalytics] Package consumer smoke test passed.');
+  console.log(`[QKTestAnalytics] Package consumer smoke test passed for ${manifest.name}@${manifest.version}.`);
 } finally {
   fs.rmSync(workspace, { recursive: true, force: true });
 }
