@@ -1,6 +1,6 @@
 {
   "name": "@qacg/qk-test-analytics",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Open, framework-agnostic test analytics and reporting for Quality & Knowledge.",
   "type": "module",
   "main": "./src/index.js",
