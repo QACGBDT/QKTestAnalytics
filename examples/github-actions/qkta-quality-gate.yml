@@ -1,0 +1,64 @@
+name: QKTestAnalytics quality gate
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Replace this with the command that produces qreport-results for your project.
+      - name: Run automated tests
+        run: npm run test:e2e
+
+      - name: Build QK report
+        if: always()
+        run: npx qkta build
+
+      - name: Evaluate QK quality gate
+        id: qkta_gate
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          npx qkta gate \
+            --min-pass-rate 95 \
+            --max-failures 0 \
+            --max-flaky-rate 5 \
+            --max-duration-regressions 0 \
+            --output qreport-results/gate.json \
+            --summary qreport-results/gate-summary.md
+          gate_exit=$?
+          set -e
+
+          cat qreport-results/gate-summary.md >> "$GITHUB_STEP_SUMMARY"
+          echo "exit_code=$gate_exit" >> "$GITHUB_OUTPUT"
+
+      - name: Upload QKTestAnalytics artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qk-test-analytics
+          if-no-files-found: warn
+          path: |
+            qreport-results/index.html
+            qreport-results/gate.json
+            qreport-results/gate-summary.md
+            qreport-results/media-bucket/**
+
+      - name: Enforce QK quality gate
+        if: always() && steps.qkta_gate.outputs.exit_code != '0'
+        shell: bash
+        run: exit "${{ steps.qkta_gate.outputs.exit_code }}"

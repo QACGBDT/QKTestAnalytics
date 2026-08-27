@@ -1,0 +1,5 @@
+node_modules/
+qreport-results/
+coverage/
+*.tgz
+.DS_Store
