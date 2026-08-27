@@ -43,6 +43,12 @@ export interface NormalizedReport {
   schemaVersion: typeof SCHEMA_VERSION;
   generatedAt: string;
   executions: NormalizedExecution[];
+  diagnostics: LegacyReportDiagnostic[];
+}
+
+export interface LegacyReportDiagnostic {
+  code: 'UNSUPPORTED_LEGACY_SHAPE' | 'UNSUPPORTED_LEGACY_TEST_NODE';
+  message: string;
 }
 
 export interface ExecutionSummary {

@@ -6,5 +6,6 @@ export {
 export type {
   WdioCucumberAdapterOptions,
   WdioCucumberHooks,
-  WdioEvidenceCaptureMode
+  WdioEvidenceCaptureMode,
+  WdioReportRedactionOptions
 } from './index.js';

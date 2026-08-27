@@ -95,11 +95,19 @@ export declare class LegacyQReportSink implements ReporterSink {
 
 export type WdioEvidenceCaptureMode = 'never' | 'on-failure' | 'always';
 
+export interface WdioReportRedactionOptions {
+  values?: string[];
+  patterns?: RegExp[];
+  replacement?: string;
+  strict?: boolean;
+}
+
 export interface WdioCucumberAdapterOptions {
   runtime?: ReporterRuntime;
   manager?: ExecutionDataManager;
   filePath?: string;
   runId?: string;
+  runIdFactory?: () => string;
   legacy?: boolean;
   evidenceStore?: EvidenceStore;
   evidenceRoot?: string;
@@ -109,6 +117,7 @@ export interface WdioCucumberAdapterOptions {
   now?: () => number;
   projectName?: string;
   onEvidenceError?: (error: unknown) => void;
+  redaction?: WdioReportRedactionOptions;
 }
 
 export interface WdioCucumberHooks {

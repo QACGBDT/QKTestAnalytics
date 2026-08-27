@@ -9,7 +9,7 @@ export function loadLegacyDirectory(reportsDir) {
   const rows = files.map(file => {
     try {
       const data = JSON.parse(fs.readFileSync(path.join(reportsDir, file), 'utf8'));
-      const first = Object.values(data)[0];
+      const first = data.execution_summary ? data : Object.values(data).find(value => value?.execution_summary);
       const started = first?.execution_summary?.global_start_time || '';
       return { file, data, started: Date.parse(started) || 0 };
     } catch { return null; }
