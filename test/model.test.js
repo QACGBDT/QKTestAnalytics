@@ -69,6 +69,36 @@ test('does not manufacture executions from malformed container values', () => {
   assert.deepEqual(model.executions, []);
 });
 
+test('recognizes bare and historical project-root executions without turning structure into tests', () => {
+  const bare = legacyRun().cycleA.run1;
+  const fromCycle = normalizeLegacyReport({ 'Current cycle': bare });
+  const fromProjectRoot = normalizeLegacyReport(bare);
+
+  for (const model of [fromCycle, fromProjectRoot]) {
+    assert.equal(model.executions.length, 1);
+    assert.equal(model.executions[0].tests.length, 1);
+    assert.equal(model.executions[0].tests[0].status, 'PASSED');
+    assert.equal(model.executions[0].tests[0].name, 'works');
+    assert.equal(model.diagnostics.length, 0);
+  }
+});
+
+test('skips unsupported structural nodes with a diagnostic instead of fabricating UNKNOWN tests', () => {
+  const model = normalizeLegacyReport({
+    cycle: {
+      run: {
+        execution_summary: { project_name: 'demo' },
+        Login: { test_summary: { status: 'PASSED' }, Given: { status: 'PASSED' } },
+        malformed: { nested: { status: 'UNKNOWN' } }
+      }
+    }
+  });
+
+  assert.equal(model.executions.length, 1);
+  assert.equal(model.executions[0].tests.length, 0);
+  assert.equal(model.diagnostics[0].code, 'UNSUPPORTED_LEGACY_TEST_NODE');
+});
+
 test('preserves primitive step values safely', () => {
   const model = normalizeLegacyReport(legacyRun({ steps: { Then: 'done' } }));
   const primitive = model.executions[0].tests[0].steps.find(step => step.name === 'Then');

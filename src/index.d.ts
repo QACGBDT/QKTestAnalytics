@@ -5,6 +5,7 @@ export type { BuildReportOptions, BuildReportResult } from './report/build-repor
 export { normalizeLegacyReport, summarizeExecutions, SCHEMA_VERSION } from './core/model.js';
 export type {
   ExecutionSummary,
+  LegacyReportDiagnostic,
   NormalizedExecution,
   NormalizedReport,
   NormalizedStep,

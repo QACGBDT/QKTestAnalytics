@@ -117,7 +117,9 @@ await qkta.attachEvidence(
 
 ### Legacy QReport transition
 
-By default `createWdioCucumberAdapter()` creates a `LegacyQReportSink` backed by `ExecutionDataManager`. This keeps `current.json`, `RUN_ID` prefixes, screenshot keys and the existing QReport HTML input convention working while QK frameworks migrate.
+By default `createWdioCucumberAdapter()` creates a `LegacyQReportSink` backed by `ExecutionDataManager`. It always writes the canonical execution envelope: `{ "<run-id>": { "execution_summary": {}, "<feature>": {} } }`. If neither `runId` nor `RUN_ID` is supplied, the adapter generates a `run-<uuid>` ID. This keeps `current.json`, screenshot keys and the existing QReport HTML input convention working while QK frameworks migrate.
+
+`normalizeLegacyReport()` accepts that canonical envelope, a bare execution object, and the historical QReport project-root object. Other shapes are skipped with `model.diagnostics`; structural nodes are never promoted into `UNKNOWN` tests.
 
 Disable the compatibility sink when supplying a custom runtime:
 
@@ -129,6 +131,22 @@ const qkta = createWdioCucumberAdapter({
 ```
 
 Legacy dynamic object paths are a compatibility output only. New adapters should target the event contract rather than emit legacy JSON themselves.
+
+### Redacting scenario-outline values and errors
+
+Scenario Outline substitutions, step text, errors and custom evidence names are reportable data. Configure redaction in the adapter so sensitive values are removed **before** any runtime sink, legacy JSON or evidence metadata sees them:
+
+```js
+const qkta = createWdioCucumberAdapter({
+  redaction: {
+    values: [process.env.TEST_PASSWORD, process.env.TEST_API_TOKEN].filter(Boolean),
+    patterns: [/session=[^\s&]+/gi],
+    strict: true
+  }
+});
+```
+
+`values` and `patterns` are replaced with `[REDACTED]`; common `password=…`, token and Bearer forms are also redacted by default. `strict: true` stops the lifecycle before it emits an event containing a configured value or pattern. The adapter uses opaque, deterministic scenario and step identities, separate from their display labels, so redaction does not make analytics grouping depend on a secret.
 
 ## Adapter design rules
 

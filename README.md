@@ -76,7 +76,7 @@ export const config = {
 };
 ```
 
-The adapter consumes the browser/session instance passed by WebdriverIO's `before` hook rather than a global `browser`. Pass/fail lifecycle, duration, errors, tags and screenshots are translated through the framework-neutral Adapter SDK. Existing QReport JSON remains the default compatibility output.
+The adapter consumes the browser/session instance passed by WebdriverIO's `before` hook rather than a global `browser`. Pass/fail lifecycle, duration, errors, tags and screenshots are translated through the framework-neutral Adapter SDK. Existing QReport JSON remains the default compatibility output, wrapped under an explicit generated run ID when `RUN_ID` is not set. Scenario/step labels, errors and custom evidence names can be redacted before they reach events, JSON or HTML; see [Adapter SDK and integrations](docs/ADAPTERS.md#redacting-scenario-outline-values-and-errors).
 
 See [Adapter SDK and integrations](docs/ADAPTERS.md) for custom evidence, capture policies and building another adapter.
 
@@ -142,7 +142,7 @@ See [Architecture](docs/ARCHITECTURE.md), [Adapter SDK](docs/ADAPTERS.md), [Cros
 
 ## Current compatibility
 
-The importer understands the JSON hierarchy produced by `@qacgbdt/quality-report-data` 1.1.x and the current/history convention consumed by `@qacgbdt/quality-dashboard` 1.1.x. Existing `qreport-results/media-bucket/reports/{current,rep_*}.json` directories can therefore be rendered, analyzed or gated without changing historical data.
+The importer understands the canonical run envelope produced by the adapter, the bare project-root hierarchy produced by `@qacgbdt/quality-report-data` 1.1.x, and the current/history convention consumed by `@qacgbdt/quality-dashboard` 1.1.x. Existing `qreport-results/media-bucket/reports/{current,rep_*}.json` directories can therefore be rendered, analyzed or gated without changing historical data. Unsupported legacy layouts produce diagnostics rather than fabricated test results.
 
 The WDIO/Cucumber adapter writes that same compatibility structure by default through `LegacyQReportSink`, allowing QK frameworks to migrate their lifecycle code without losing existing report history or dashboard compatibility.
 
