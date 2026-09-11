@@ -36,14 +36,7 @@
     "qreport-build": "./bin/qkta.js",
     "qreport-cycle": "./bin/qkta.js"
   },
-  "files": [
-    "bin",
-    "src",
-    "docs",
-    "README.md",
-    "LICENSE",
-    "CHANGELOG.md"
-  ],
+  "files": ["bin", "src", "docs", "README.md", "LICENSE", "CHANGELOG.md"],
   "scripts": {
     "lint": "node ./scripts/lint.js",
     "test": "node --test",
@@ -55,20 +48,8 @@
     "report": "node ./bin/qkta.js build",
     "prepublishOnly": "npm run quality"
   },
-  "engines": {
-    "node": ">=20"
-  },
-  "keywords": [
-    "testing",
-    "test-report",
-    "test-analytics",
-    "qa",
-    "quality-engineering",
-    "cucumber",
-    "webdriverio",
-    "playwright",
-    "allure-alternative"
-  ],
+  "engines": { "node": ">=20" },
+  "keywords": ["testing", "test-report", "test-analytics", "qa", "quality-engineering", "cucumber", "webdriverio", "playwright", "allure-alternative"],
   "author": {
     "name": "Quality & Knowledge",
     "email": "eric.pereyra@icloud.com",
@@ -81,13 +62,8 @@
     }
   ],
   "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/QACGBDT/QKTestAnalytics.git"
-  },
-  "bugs": {
-    "url": "https://github.com/QACGBDT/QKTestAnalytics/issues"
-  },
+  "repository": { "type": "git", "url": "git+https://github.com/QACGBDT/QKTestAnalytics.git" },
+  "bugs": { "url": "https://github.com/QACGBDT/QKTestAnalytics/issues" },
   "homepage": "https://github.com/QACGBDT/QKTestAnalytics#readme",
   "publishConfig": {
     "access": "public",
