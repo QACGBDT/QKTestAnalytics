@@ -8,6 +8,16 @@ The format follows Keep a Changelog principles and this project uses Semantic Ve
 
 No unreleased changes.
 
+## [0.4.2] - 2026-09-11
+
+### Fixed
+
+- Removed stray text from the README introduction.
+
+### Changed
+
+- Synchronized npm package and lockfile metadata for the 0.4.2 patch release.
+
 ## [0.4.1] - 2026-08-27
 
 ### Fixed
