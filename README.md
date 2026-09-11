@@ -1,5 +1,5 @@
 # QKTestAnalytics
-1
+
 Open, framework-agnostic test analytics and reporting from **Quality & Knowledge (QK)**. QKTestAnalytics consolidates the former `quality-report-data` and `quality-dashboard` projects into one public npm package and one stable reporting contract.
 
 > Status: **0.4.1 public release**. The package includes the framework-neutral core, Adapter SDK, cross-run analytics and CI quality gates while preserving legacy QReport compatibility. QKForce CWQ pins this public package for its fixed WDIO/Cucumber profile.
